@@ -1,0 +1,101 @@
+name: library-java-angular-mongo
+
+services:
+  core:
+    hostname: core-library
+    build:
+      context: docker/java-core
+      dockerfile: develop/Dockerfile
+      args:
+        HOST_USER: ${HOST_USER}
+        HOST_USER_ID: ${HOST_USER_ID}
+        HOST_GROUP: ${HOST_GROUP}
+        HOST_GROUP_ID: ${HOST_GROUP_ID}
+        TIMEZONE: ${TIMEZONE}
+    volumes:
+      - ./core:/app:rw,cached
+    networks:
+      library-java:
+
+  worker:
+    build:
+      context: docker/java-worker/
+      dockerfile: develop/Dockerfile
+      args:
+        HOST_USER: ${HOST_USER}
+        HOST_USER_ID: ${HOST_USER_ID}
+        HOST_GROUP: ${HOST_GROUP}
+        HOST_GROUP_ID: ${HOST_GROUP_ID}
+        TIMEZONE: ${TIMEZONE}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+        restart: true
+    environment:
+      GRADLE_USER_HOME: /home/${HOST_USER}/.gradle
+    volumes:
+      - ./core:/app:rw,cached
+    networks:
+      library-java:
+
+  editor:
+    build:
+      context: docker/editor/
+      dockerfile: develop/Dockerfile
+      args:
+        HOST_USER: ${HOST_USER}
+        HOST_USER_ID: ${HOST_USER_ID}
+        HOST_GROUP: ${HOST_GROUP}
+        HOST_GROUP_ID: ${HOST_GROUP_ID}
+        TIMEZONE: ${TIMEZONE}
+    volumes:
+      - ./editor:/app:rw,cached
+    networks:
+      library-java:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/develop/Dockerfile
+    depends_on:
+      - core
+      - editor
+    volumes:
+      - ./core:/srv/app/core:ro
+    links:
+      - core
+      - editor
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      library-java:
+
+  mongo:
+    image: mongo:6.0.11
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${MONGO_DB_PATH}:/data/db
+      - ${MONGO_CONFIG_PATH}:/data/configdb
+    networks:
+      library-java:
+
+  rabbitmq:
+    hostname: rabbit
+    image: rabbitmq:3-management
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ${RABBITMQ_DATA_PATH}:/var/lib/rabbitmq/
+    networks:
+      library-java:
+
+networks:
+  library-java:
