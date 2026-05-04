@@ -124,9 +124,11 @@ public abstract class EntityRepositoryStub<T> extends Exceptionable implements I
         }
     }
 
-    public void assertRemoved() {
+    public String assertRemoved() {
         if (removed == null) {
             throw new AssertionError("No entity was removed");
         }
+
+        return removed;
     }
 }

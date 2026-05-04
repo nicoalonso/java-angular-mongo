@@ -19,7 +19,7 @@ public class PurchaseCreate extends PurchaseMakeable {
     private final UserRepository repoUser;
     private final DomainBus bus;
 
-    protected PurchaseCreate(
+    public PurchaseCreate(
             PurchaseRepository repoPurchase,
             PurchaseLineRepository repoPurchaseLine,
             ProviderRepository repoProvider,
