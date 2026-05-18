@@ -93,8 +93,8 @@ docker compose up -d
 
 Vas a poder observar que usamos dos sistemas de mensajería:
 
-- EventEmitter del framework NestJS `@nestjs/event-emitter` para disparar eventos en primer plano, es decir, dentro del mismo proceso de ejecución. Esto es útil para tareas que no requieren una comunicación entre servicios o procesos separados.
-- Microservicios con `@nestjs/microservices` para disparar procesos en segundo plano, es decir, fuera del proceso de ejecución principal. Esto es útil para tareas que requieren una comunicación entre servicios o procesos separados, como el envío de correos electrónicos o la generación de informes.
+- `ApplicationEventPublisher` del framework SpringBoot para disparar eventos en primer plano, es decir, dentro del mismo proceso de ejecución. Esto es útil para tareas que no requieren una comunicación entre servicios o procesos separados.
+- `AmqpTemplate`, también del framework SpringBoot, para disparar procesos en segundo plano, es decir, fuera del proceso de ejecución principal. Esto es útil para tareas que requieren una comunicación entre servicios o procesos separados, como el envío de correos electrónicos o la generación de informes.
 
 Para el segundo caso se usa como capa de transporte **RabbitMQ**.
 

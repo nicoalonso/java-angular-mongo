@@ -17,7 +17,10 @@ Si has configurado el fichero `/etc/hosts` como se indica en el README principal
 
 ## Mensajería
 
-Pendiente...
+Vas a poder observar que usamos dos sistemas de mensajería:
+
+- `ApplicationEventPublisher` del framework SpringBoot para disparar eventos en primer plano, es decir, dentro del mismo proceso de ejecución. Esto es útil para tareas que no requieren una comunicación entre servicios o procesos separados.
+- `AmqpTemplate`, también del framework SpringBoot, para disparar procesos en segundo plano, es decir, fuera del proceso de ejecución principal. Esto es útil para tareas que requieren una comunicación entre servicios o procesos separados, como el envío de correos electrónicos o la generación de informes.
 
 Para el segundo caso se usa como capa de transporte **RabbitMQ**.
 
@@ -37,4 +40,12 @@ Siga los siguientes pasos para configurar RabbitMQ:
 
 ## Tests Unitarios
 
-Pendiente...
+## Testing
+
+Para la parte de testing se está usando JUnit como framework de pruebas unitarias.
+
+Para ejecutar los tests unitarios, puedes usar el siguiente comando:
+
+```bash
+docker compose exec core gradle :test
+```
